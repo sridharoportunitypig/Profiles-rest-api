@@ -1,7 +1,8 @@
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from rest_framework import viewsets
 from profile_api import serializers
 
 class HelloApiView(APIView):
@@ -33,10 +34,57 @@ class HelloApiView(APIView):
     def put(self, request, pk=None):
         """Handle an update an object"""
         return Response({'method':'put'})
+
+
     def patch(self,request, pk=None):
         """Handle a partial update of an objects"""
         return({'method': 'patch'})
+
+
     def delete(self,repones,pk=None):
         """delete an object"""
         return Response({'method':'DELETE'})
-        
+
+class HelloViewSet(viewsets.ViewSet):
+    """Test API ViewSet"""
+    serializers_class=serializers.HelloSerializer
+
+    def list(self, request):
+        """Return a hello message"""
+
+        a_viewset =[
+         'Uses actions (list,create,retrive,update,partial_update)',
+         'automatically maps to urls using routers',
+         'provides more funtionality with low cost '
+        ]
+
+        return Response({'message':'Hello','a_viewset':a_viewset})
+
+    def create(self,request):
+        """create a new  hello message"""
+        serializer = self.serializers_class(data=request.data)
+
+        if serializer.is_vaild():
+            name = serializer.validated_data.get('name')
+            message = f'Hello{name}!'
+            return Response({'massage':message})
+        else:
+            return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+            )
+    def retrive(self,request, pk=None):
+        """Handle getting an object  by its ID"""
+        return Response({'HTTP_method':'GET'})
+
+    def update(self,request,pk=None):
+        """"Handle update an object"""
+        return Response({'http_method':'PUT'})
+
+    def paritial_update(self,request,pk=None):
+        """Handle update an object """
+        return Response({'http_method':'PATCH'})
+
+    def destroy(self,request,pk=None):
+        """Handle removing an objectsa"""
+        return Response({'HTTP_method':'DELETE'})
